@@ -1,6 +1,7 @@
 import { inject, injectable } from "tsyringe";
 
 import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
+import { Statement } from "../../entities/Statement";
 import { IStatementsRepository } from "../../repositories/IStatementsRepository";
 import { GetStatementOperationError } from "./GetStatementOperationError";
 
@@ -12,27 +13,30 @@ interface IRequest {
 @injectable()
 export class GetStatementOperationUseCase {
   constructor(
-    @inject('UsersRepository')
+    @inject("UsersRepository")
     private usersRepository: IUsersRepository,
 
-    @inject('StatementsRepository')
+    @inject("StatementsRepository")
     private statementsRepository: IStatementsRepository
   ) {}
 
-  async execute({ user_id, statement_id }: IRequest) {
+  async execute({ user_id, statement_id }: IRequest): Promise<Statement> {
     const user = await this.usersRepository.findById(user_id);
 
-    if(!user) {
+    if (!user) {
       throw new GetStatementOperationError.UserNotFound();
     }
 
-    const statementOperation = await this.statementsRepository
-      .findStatementOperation({ user_id, statement_id });
+    const statementOperation =
+      await this.statementsRepository.findStatementOperation({
+        user_id,
+        statement_id,
+      });
 
-      if(!statementOperation) {
-        throw new GetStatementOperationError.StatementNotFound();
-      }
+    if (!statementOperation) {
+      throw new GetStatementOperationError.StatementNotFound();
+    }
 
-      return statementOperation;
+    return statementOperation;
   }
 }
