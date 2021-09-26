@@ -48,16 +48,7 @@ describe("Create Statement Use Case", () => {
     expect(statement).toHaveProperty("id");
   });
 
-  // TODO: cant create with invalid user
   it("should not be able to create a new statement with invalid user", async () => {
-    // const testUser: ICreateUserDTO = {
-    //   name: "test dude",
-    //   email: "test@test.com",
-    //   password: "12345",
-    // };
-
-    // const user = await createUser.execute(testUser);
-
     const testData: ICreateStatementDTO = {
       amount: 100,
       description: "initial balance",
@@ -65,13 +56,38 @@ describe("Create Statement Use Case", () => {
       type: OperationType.DEPOSIT,
     };
 
-    // expect(async () => {
-    //   await createStatementUseCase.execute(testData);
-    // }).rejects.toHaveProperty("statusCode");
-
-    const statement = await createStatementUseCase.execute(testData);
-    console.log({ statement });
+    expect(async () => {
+      await createStatementUseCase.execute(testData);
+    }).rejects.toBeInstanceOf(CreateStatementError.UserNotFound);
   });
 
-  // TODO: cant create without balance (balance <= 0)
+  // the amount user wants to withdraw must be greater than balance
+  it("should not be able to create a new statement that makes balance less than zero", async () => {
+    const testUser: ICreateUserDTO = {
+      name: "test dude",
+      email: "test@test.com",
+      password: "12345",
+    };
+
+    const user = await createUser.execute(testUser);
+
+    const testData1: ICreateStatementDTO = {
+      amount: 100,
+      description: "initial balance",
+      user_id: user.id as string,
+      type: OperationType.DEPOSIT,
+    };
+
+    const testData2: ICreateStatementDTO = {
+      amount: 101,
+      description: "initial balance",
+      user_id: user.id as string,
+      type: OperationType.WITHDRAW,
+    };
+
+    expect(async () => {
+      await createStatementUseCase.execute(testData1);
+      await createStatementUseCase.execute(testData2);
+    }).rejects.toBeInstanceOf(CreateStatementError.InsufficientFunds);
+  });
 });
