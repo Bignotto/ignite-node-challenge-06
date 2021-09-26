@@ -1,23 +1,21 @@
-import { InMemoryUsersRepository } from "../../repositories/in-memory/InMemoryUsersRepository"
-import { AuthenticateUserUseCase } from "./AuthenticateUserUseCase";
-import { ICreateUserDTO } from "../../useCases/createUser/ICreateUserDTO";
+import { InMemoryUsersRepository } from "../../repositories/in-memory/InMemoryUsersRepository";
 import { CreateUserUseCase } from "../createUser/CreateUserUseCase";
+import { ICreateUserDTO } from "../createUser/ICreateUserDTO";
+import { AuthenticateUserUseCase } from "./AuthenticateUserUseCase";
 import { IncorrectEmailOrPasswordError } from "./IncorrectEmailOrPasswordError";
-
-
 
 let usersRepository: InMemoryUsersRepository;
 let createUserUseCase: CreateUserUseCase;
 let authenticateUser: AuthenticateUserUseCase;
 
-describe("Authenticate User Use Case",()=>{
-  beforeEach(()=>{
+describe("Authenticate User Use Case", () => {
+  beforeEach(() => {
     usersRepository = new InMemoryUsersRepository();
     authenticateUser = new AuthenticateUserUseCase(usersRepository);
     createUserUseCase = new CreateUserUseCase(usersRepository);
   });
 
-  it("should be able to authenticate user with email and password",async () => {
+  it("should be able to authenticate user with email and password", async () => {
     const testData: ICreateUserDTO = {
       name: "test dude",
       email: "test@test.com",
@@ -31,10 +29,10 @@ describe("Authenticate User Use Case",()=>{
       password: "12345",
     });
 
-    expect(result).toHaveProperty("token")
+    expect(result).toHaveProperty("token");
   });
 
-  it("should not be able to authenticate user with wrong email",async () => {
+  it("should not be able to authenticate user with wrong email", async () => {
     const testData: ICreateUserDTO = {
       name: "test dude",
       email: "test@test.com",
@@ -51,7 +49,7 @@ describe("Authenticate User Use Case",()=>{
     }).rejects.toBeInstanceOf(IncorrectEmailOrPasswordError);
   });
 
-  it("should not be able to authenticate user with wrong password",async () => {
+  it("should not be able to authenticate user with wrong password", async () => {
     const testData: ICreateUserDTO = {
       name: "test dude",
       email: "test@test.com",
@@ -67,4 +65,4 @@ describe("Authenticate User Use Case",()=>{
       });
     }).rejects.toBeInstanceOf(IncorrectEmailOrPasswordError);
   });
-})
+});

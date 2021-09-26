@@ -1,26 +1,21 @@
-import { InMemoryUsersRepository } from "../../repositories/in-memory/InMemoryUsersRepository"
-import { ICreateUserDTO } from "../../useCases/createUser/ICreateUserDTO";
-import { AuthenticateUserUseCase } from "../authenticateUser/AuthenticateUserUseCase";
+import { InMemoryUsersRepository } from "../../repositories/in-memory/InMemoryUsersRepository";
 import { CreateUserUseCase } from "../createUser/CreateUserUseCase";
+import { ICreateUserDTO } from "../createUser/ICreateUserDTO";
 import { ShowUserProfileError } from "./ShowUserProfileError";
 import { ShowUserProfileUseCase } from "./ShowUserProfileUseCase";
 
-
-
 let usersRepository: InMemoryUsersRepository;
 let createUserUseCase: CreateUserUseCase;
-let authenticateUser: AuthenticateUserUseCase;
 let showUser: ShowUserProfileUseCase;
 
-describe("User Profile Use Case",()=>{
-  beforeEach(()=>{
+describe("User Profile Use Case", () => {
+  beforeEach(() => {
     usersRepository = new InMemoryUsersRepository();
-    authenticateUser = new AuthenticateUserUseCase(usersRepository);
     createUserUseCase = new CreateUserUseCase(usersRepository);
     showUser = new ShowUserProfileUseCase(usersRepository);
   });
 
-  it("should be able to get user profile data",async () => {
+  it("should be able to get user profile data", async () => {
     const testData: ICreateUserDTO = {
       name: "test dude",
       email: "test@test.com",
@@ -32,10 +27,9 @@ describe("User Profile Use Case",()=>{
     const profile = await showUser.execute(user.id as string);
 
     expect(profile.email).toBe("test@test.com");
-
   });
 
-  it("should not be able to get user profile with invalid user id",async () => {
+  it("should not be able to get user profile with invalid user id", async () => {
     const testData: ICreateUserDTO = {
       name: "test dude",
       email: "test@test.com",
@@ -48,4 +42,4 @@ describe("User Profile Use Case",()=>{
       await showUser.execute("a1b2c3d4e5");
     }).rejects.toBeInstanceOf(ShowUserProfileError);
   });
-})
+});
