@@ -45,4 +45,18 @@ describe("Authenticate User Controller", () => {
     expect(statement.type).toBe("deposit");
     expect(statement).toHaveProperty("id");
   });
+
+  it("should not be able to make a deposit without a valid token", async () => {
+    const deposit = await request(app)
+      .post("/api/v1/statements/deposit")
+      .set({
+        Authorization: `Bearer invalid token`,
+      })
+      .send({ amount: 1, description: "deposit test" });
+
+    const error = deposit.body;
+
+    expect(deposit.status).toBe(401);
+    expect(error.message).toBe("JWT invalid token!");
+  });
 });
