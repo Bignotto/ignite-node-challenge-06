@@ -7,7 +7,7 @@ import { Statement } from "../../entities/Statement";
 
 let connection: Connection;
 
-describe("Authenticate User Controller", () => {
+describe("Create Statement Controller", () => {
   beforeAll(async () => {
     connection = await createConnection();
     await connection.runMigrations();
