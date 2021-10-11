@@ -29,6 +29,12 @@ export class CreateTransferUseCase {
       throw new CreateTransferError.UserNotFound();
     }
 
+    const sender = await this.usersRepository.findById(sender_id);
+
+    if (!sender) {
+      throw new CreateTransferError.UserNotFound();
+    }
+
     const { balance } = await this.statementsRepository.getUserBalance({
       user_id,
     });
