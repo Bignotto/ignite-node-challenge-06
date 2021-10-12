@@ -11,7 +11,7 @@ enum OperationType {
 
 export class CreateStatementController {
   async execute(request: Request, response: Response): Promise<Response> {
-    const { id: user_id } = request.user;
+    const { id: from_user } = request.user;
     const { amount, description } = request.body;
     const { id: to_user } = request.params;
 
@@ -24,7 +24,7 @@ export class CreateStatementController {
       type,
       amount,
       description,
-      sender_id: user_id,
+      sender_id: from_user,
     });
 
     return response.status(201).json(statement);

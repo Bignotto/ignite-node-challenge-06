@@ -23,33 +23,41 @@ export class CreateTransferUseCase {
     description,
     sender_id,
   }: ICreateTransferDTO): Promise<Statement> {
-    const user = await this.usersRepository.findById(user_id);
+    const to_user = await this.usersRepository.findById(user_id);
 
-    if (!user) {
+    if (!to_user) {
       throw new CreateTransferError.UserNotFound();
     }
 
-    const sender = await this.usersRepository.findById(sender_id);
+    const from_user = await this.usersRepository.findById(sender_id);
 
-    if (!sender) {
+    if (!from_user) {
       throw new CreateTransferError.UserNotFound();
     }
 
     const { balance } = await this.statementsRepository.getUserBalance({
-      user_id,
+      user_id: sender_id,
     });
 
     if (balance < amount) {
       throw new CreateTransferError.InsufficientFunds();
     }
 
-    const statementOperation = await this.statementsRepository.create({
-      user_id,
+    await this.statementsRepository.create({
+      user_id: sender_id,
       type,
       amount,
       description,
     });
 
-    return statementOperation;
+    const transferStatement = await this.statementsRepository.create({
+      user_id,
+      type,
+      amount,
+      description,
+      sender_id,
+    });
+
+    return transferStatement;
   }
 }
